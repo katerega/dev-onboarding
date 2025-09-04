@@ -8,7 +8,7 @@
 ### Installation & Setup
 # Clone the repository
 git clone https://github.com/WinfredWinfred/TradeSphere-DEX.git
-cd TradeSphere\swap-dex
+cd TradeSphere-DEX
 
 # Install dependencies
 npm install
