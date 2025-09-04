@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    container_name: tradesphere_app
+    ports:
+      - "3000:3000" # Exposes port 3000 on your machine
+    env_file:
+      - .env # This makes environment variables available inside the container
+    volumes:
+      - .:/app # Mounts your project directory into the container
+    command: npm start
