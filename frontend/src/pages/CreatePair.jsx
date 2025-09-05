@@ -130,17 +130,17 @@ const CreatePair = () => {
 
   return (
     <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
-      <div className="max-w-md mx-auto">
+      <div className="max-w-md sm:max-w-lg mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-4">Create New Token Pair</h1>
-          <p className="text-blue-200">
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-4">Create New Token Pair</h1>
+          <p className="text-sm sm:text-base text-blue-200">
             Create a new trading pair by adding initial liquidity to the pool
           </p>
         </div>
 
         {/* Main Interface */}
-        <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-blue-800/30 shadow-2xl">
+        <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-blue-800/30 shadow-2xl">
             {/* Token A Input */}
             <div className="mb-6">
               <label className="block text-blue-200 text-sm font-medium mb-2">

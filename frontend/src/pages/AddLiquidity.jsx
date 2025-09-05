@@ -88,17 +88,17 @@ const AddLiquidity = () => {
 
   return (
     <section className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Add Liquidity</h1>
-          <p className="text-blue-200">Provide liquidity to earn trading fees and liquidity rewards</p>
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Add Liquidity</h1>
+          <p className="text-sm sm:text-base text-blue-200">Provide liquidity to earn trading fees and liquidity rewards</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8">
           {/* Main Liquidity Interface */}
-          <div className="lg:col-span-2">
-            <div className="bg-slate-800/50 border border-blue-500/20 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+          <div className="xl:col-span-2">
+            <div className="bg-slate-800/50 border border-blue-500/20 backdrop-blur-sm rounded-2xl p-4 sm:p-6 shadow-lg">
               {/* Pool Selection */}
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-lg font-semibold text-white">Select Pair</h2>
@@ -120,15 +120,15 @@ const AddLiquidity = () => {
                     Balance: {tokens.find(t => t.symbol === tokenA)?.balance || '0.0'}
                   </span>
                 </div>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0">
                   <input
                     type="number"
                     value={amountA}
                     onChange={(e) => setAmountA(e.target.value)}
                     placeholder="0.0"
-                    className="bg-transparent text-white text-2xl font-semibold outline-none flex-1 mr-4"
+                    className="bg-transparent text-white text-xl sm:text-2xl font-semibold outline-none flex-1 sm:mr-4"
                   />
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center justify-between sm:justify-end space-x-2">
                     <button
                       onClick={() => handleMaxAmount(tokenA)}
                       className="text-cyan-400 text-sm font-medium hover:text-cyan-300 transition-colors"
@@ -138,7 +138,7 @@ const AddLiquidity = () => {
                     <select
                       value={tokenA}
                       onChange={(e) => setTokenA(e.target.value)}
-                      className="bg-slate-600/50 text-white border border-blue-400/30 rounded-lg px-3 py-2 font-medium focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                      className="bg-slate-600/50 text-white border border-blue-400/30 rounded-lg px-3 py-2 text-sm sm:text-base font-medium focus:outline-none focus:ring-2 focus:ring-cyan-400"
                     >
                       {tokens.map((token) => (
                         <option key={token.symbol} value={token.symbol}>
@@ -170,15 +170,15 @@ const AddLiquidity = () => {
                     Balance: {tokens.find(t => t.symbol === tokenB)?.balance || '0.0'}
                   </span>
                 </div>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0">
                   <input
                     type="number"
                     value={amountB}
                     onChange={(e) => setAmountB(e.target.value)}
                     placeholder="0.0"
-                    className="bg-transparent text-white text-2xl font-semibold outline-none flex-1 mr-4"
+                    className="bg-transparent text-white text-xl sm:text-2xl font-semibold outline-none flex-1 sm:mr-4"
                   />
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center justify-between sm:justify-end space-x-2">
                     <button
                       onClick={() => handleMaxAmount(tokenB)}
                       className="text-cyan-400 text-sm font-medium hover:text-cyan-300 transition-colors"
@@ -188,7 +188,7 @@ const AddLiquidity = () => {
                     <select
                       value={tokenB}
                       onChange={(e) => setTokenB(e.target.value)}
-                      className="bg-slate-600/50 text-white border border-blue-400/30 rounded-lg px-3 py-2 font-medium focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                      className="bg-slate-600/50 text-white border border-blue-400/30 rounded-lg px-3 py-2 text-sm sm:text-base font-medium focus:outline-none focus:ring-2 focus:ring-cyan-400"
                     >
                       {tokens.map((token) => (
                         <option key={token.symbol} value={token.symbol}>
