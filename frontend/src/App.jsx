@@ -1,34 +1,36 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import React from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import Header from './components/Header'
+import Hero from './components/Hero'
+import SwapInterface from './pages/SwapInterface'
+import AddLiquidity from './pages/AddLiquidity'
+import CreatePair from './pages/CreatePair'
+import Features from './components/Features'
+import Footer from './components/Footer'
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+// Landing page component
+const LandingPage = () => (
+  <>
+    <Hero />
+    <Features />
+  </>
+)
 
+function App() {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <Router>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 text-white">
+        <Header />
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/swap" element={<SwapInterface />} />
+          <Route path="/liquidity" element={<AddLiquidity />} />
+          <Route path="/create-pair" element={<CreatePair />} />
+        </Routes>
+        <Footer />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </Router>
   )
 }
 
