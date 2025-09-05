@@ -1,6 +1,7 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
-const Hero = ({ setCurrentView }) => {
+const Hero = () => {
   return (
     <section className="relative overflow-hidden">
       {/* Background pattern */}
@@ -29,12 +30,12 @@ const Hero = ({ setCurrentView }) => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
-            <button
-              onClick={() => setCurrentView('swap')}
+            <Link
+              to="/swap"
               className="bg-gradient-to-r from-blue-500 to-cyan-400 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:from-blue-600 hover:to-cyan-500 transition-all transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-slate-900 shadow-2xl"
             >
               Start Trading
-            </button>
+            </Link>
             <button className="border-2 border-blue-400/50 text-blue-200 px-8 py-4 rounded-lg text-lg font-semibold hover:border-cyan-400 hover:bg-cyan-400/10 hover:text-white transition-all backdrop-blur-sm">
               Learn More
             </button>
