@@ -12,16 +12,14 @@ module.exports = {
     }
   },
   networks: {
-    // Evmos Testnet - Use this reliable RPC
     evmosTestnet: {
-      url: "https://evmos-testnet.lava.build", // This one usually works
-      accounts: [process.env.PRIVATE_KEY],
-      chainId: 9000,
-      gas: 2100000,
-      gasPrice: 25000000000, // 25 Gwei
-      timeout: 120000 // 2 minute timeout
-    },
-    // Local development
+  url: process.env.RPC_URL_EVMOS,
+  accounts: [process.env.PRIVATE_KEY],
+  chainId: 9000,
+  gas: 2100000,
+  gasPrice: 25000000000,
+  timeout: 180000 // 3 minutes
+},
     localhost: {
       url: "http://127.0.0.1:8545",
       chainId: 31337
