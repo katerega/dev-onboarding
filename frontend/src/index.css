@@ -1,40 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
+
+
+/* :root {
+  font-family: 'Inter', system-ui, sans-serif;
+  line-height: 1.6;
   font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
+  color-scheme: dark;
+  color: rgba(255, 255, 255, 0.9);
+  background-color: #000;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
-a:hover {
-  color: #535bf2;
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
+  min-height: 100vh;
+  background: #000;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
   min-height: 100vh;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+a {
+  font-weight: 500;
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: #d1d5db;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  color: #fff;
 }
 
 button {
@@ -44,11 +64,61 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: all 0.3s ease;
 }
-button:hover {
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+input, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  background: transparent;
+  border: 1px solid #374151;
+  color: #fff;
+}
+
+input::placeholder {
+  color: #6b7280;
+}
+
+/* Focus styles for accessibility */
+/* :focus {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+} */
+
+/* :focus:not(:focus-visible) {
+  outline: none;
+} */
+
+/* Selection styles */
+/* ::selection {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+} */
+
+/* Smooth transitions for all interactive elements */
+/* button, a, input, select {
+  transition: all 0.3s ease;
+} */
+
+/* Remove blue highlight on tap for mobile */
+/* * {
+  -webkit-tap-highlight-color: transparent;
+} */
+
+/* Improve font rendering */
+/* body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+} */
+/* button:hover {
   border-color: #646cff;
 }
 button:focus,
@@ -67,4 +137,4 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
-}
+} */ 
