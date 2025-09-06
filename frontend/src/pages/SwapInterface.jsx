@@ -290,15 +290,15 @@ const SwapInterface = () => {
 
   return (
     <section className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
-      <div className="max-w-md mx-auto">
+      <div className="max-w-md sm:max-w-lg mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Swap Tokens</h1>
-          <p className="text-blue-200">Trade tokens instantly on Evmos</p>
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Swap Tokens</h1>
+          <p className="text-sm sm:text-base text-blue-200">Trade tokens instantly with the best rates</p>
         </div>
 
         {/* Swap Interface */}
-        <div className="bg-slate-800/50 border border-blue-500/20 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+        <div className="bg-slate-800/50 border border-blue-500/20 backdrop-blur-sm rounded-2xl p-4 sm:p-6 shadow-lg">
           {/* Settings */}
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-lg font-semibold text-white">Swap</h2>
@@ -320,19 +320,19 @@ const SwapInterface = () => {
                 Balance: {balances[fromToken] || '0.0'}
               </span>
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0">
               <input
                 type="number"
                 value={fromAmount}
                 onChange={(e) => setFromAmount(e.target.value)}
                 placeholder="0.0"
-                className="bg-transparent text-white text-2xl font-semibold outline-none flex-1 mr-4"
+                className="bg-transparent text-white text-xl sm:text-2xl font-semibold outline-none flex-1 sm:mr-4"
               />
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center justify-end sm:justify-start">
                 <select
                   value={fromToken}
                   onChange={(e) => setFromToken(e.target.value)}
-                  className="bg-slate-600/50 text-white border border-blue-400/30 rounded-lg px-3 py-2 font-medium focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                  className="bg-slate-600/50 text-white border border-blue-400/30 rounded-lg px-3 py-2 text-sm sm:text-base font-medium focus:outline-none focus:ring-2 focus:ring-cyan-400 w-full sm:w-auto"
                 >
                   {TOKEN_LIST.map((token) => (
                     <option key={token.symbol} value={token.symbol}>
@@ -365,20 +365,20 @@ const SwapInterface = () => {
                 Balance: {balances[toToken] || '0.0'}
               </span>
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0">
               <input
                 type="number"
                 value={toAmount}
                 onChange={(e) => setToAmount(e.target.value)}
                 placeholder="0.0"
-                className="bg-transparent text-white text-2xl font-semibold outline-none flex-1 mr-4"
+                className="bg-transparent text-white text-xl sm:text-2xl font-semibold outline-none flex-1 sm:mr-4"
                 readOnly
               />
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center justify-end sm:justify-start">
                 <select
                   value={toToken}
                   onChange={(e) => setToToken(e.target.value)}
-                  className="bg-slate-600/50 text-white border border-blue-400/30 rounded-lg px-3 py-2 font-medium focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                  className="bg-slate-600/50 text-white border border-blue-400/30 rounded-lg px-3 py-2 text-sm sm:text-base font-medium focus:outline-none focus:ring-2 focus:ring-cyan-400 w-full sm:w-auto"
                 >
                   {TOKEN_LIST.map((token) => (
                     <option key={token.symbol} value={token.symbol}>

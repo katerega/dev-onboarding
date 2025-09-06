@@ -14,7 +14,7 @@ module.exports = {
   networks: {
     // Evmos Testnet - Multiple endpoints to try
     evmosTestnet: {
-      url: "https://jsonrpc-t.evmos.nodestake.top",
+      url: process.env.RPC_URL_EVMOS,
       accounts: [process.env.PRIVATE_KEY],
       chainId: 9000,
       timeout: 60000,
