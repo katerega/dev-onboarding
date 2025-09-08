@@ -12,7 +12,6 @@ const WalletButton = ({ className = '' }) => {
     isOnEvmosNetwork,
     isMetaMaskInstalled,
     connectWallet,
-    disconnectWallet,
     switchToEvmosNetwork,
   } = useWalletContext()
 
@@ -26,6 +25,8 @@ const WalletButton = ({ className = '' }) => {
     }
     await connectWallet()
   }
+
+  
 
   // Handle network switch
   const handleNetworkSwitch = async () => {
@@ -41,23 +42,13 @@ const WalletButton = ({ className = '' }) => {
           <div className="absolute -top-2 -right-2 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
         )}
 
-        {/* Wallet Button */}
+        {/* Wallet Address & Dropdown */}
         <button
           onClick={() => setShowDropdown(!showDropdown)}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-slate-900 ${
-            isOnEvmosNetwork
-              ? 'bg-gradient-to-r from-green-500 to-emerald-400 text-white hover:from-green-600 hover:to-emerald-500'
-              : 'bg-gradient-to-r from-red-500 to-orange-400 text-white hover:from-red-600 hover:to-orange-500'
-          }`}
+          className="flex items-center space-x-2 px-3 py-2 text-white hover:text-blue-200 transition-all focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-slate-900"
         >
-          {/* Status Indicator */}
-          <div className={`w-2 h-2 rounded-full ${isOnEvmosNetwork ? 'bg-green-200' : 'bg-red-200'}`}></div>
-          
-          {/* Address and Balance */}
-          <div className="flex flex-col items-start">
-            <span className="text-sm font-semibold">{formattedAddress}</span>
-            <span className="text-xs opacity-90">{balance} EVMOS</span>
-          </div>
+          {/* Wallet Address */}
+          <span className="text-sm font-medium">{formattedAddress}</span>
           
           {/* Dropdown Arrow */}
           <svg
@@ -146,7 +137,7 @@ const WalletButton = ({ className = '' }) => {
                   <span>View on Explorer</span>
                 </button>
                 
-                <button
+                {/* <button
                   onClick={() => {
                     disconnectWallet()
                     setShowDropdown(false)
@@ -157,7 +148,7 @@ const WalletButton = ({ className = '' }) => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                   </svg>
                   <span>Disconnect</span>
-                </button>
+                </button> */}
               </div>
             </div>
           </>
