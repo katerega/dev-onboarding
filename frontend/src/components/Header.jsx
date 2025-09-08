@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import WalletButton from './WalletButton'
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -77,9 +78,7 @@ const Header = () => {
 
           {/* Connect Wallet Button */}
           <div className="hidden md:flex items-center space-x-4">
-            <button className="bg-gradient-to-r from-blue-500 to-cyan-400 text-white px-6 py-2 rounded-lg font-medium hover:from-blue-600 hover:to-cyan-500 transition-all focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-slate-900">
-              Connect Wallet
-            </button>
+            <WalletButton />
           </div>
 
           {/* Mobile menu button */}
@@ -155,9 +154,9 @@ const Header = () => {
               >
                 Docs
               </a>
-              <button className="w-full mt-4 bg-gradient-to-r from-blue-500 to-cyan-400 text-white px-6 py-2 rounded-lg font-medium hover:from-blue-600 hover:to-cyan-500 transition-all">
-                Connect Wallet
-              </button>
+              <div className="mt-4">
+                <WalletButton className="w-full" />
+              </div>
             </div>
           </div>
         )}
