@@ -1,5 +1,6 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { WalletProvider } from './context/WalletContext'
 import Header from './components/Header'
 import Hero from './components/Hero'
 import SwapInterface from './pages/SwapInterface'
@@ -19,18 +20,20 @@ const LandingPage = () => (
 
 function App() {
   return (
-    <Router>
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 text-white">
-        <Header />
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/swap" element={<SwapInterface />} />
-          <Route path="/liquidity" element={<AddLiquidity />} />
-          <Route path="/create-pair" element={<CreatePair />} />
-        </Routes>
-        <Footer />
-      </div>
-    </Router>
+    <WalletProvider>
+      <Router>
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 text-white">
+          <Header />
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/swap" element={<SwapInterface />} />
+            <Route path="/liquidity" element={<AddLiquidity />} />
+            <Route path="/create-pair" element={<CreatePair />} />
+          </Routes>
+          <Footer />
+        </div>
+      </Router>
+    </WalletProvider>
   )
 }
 
