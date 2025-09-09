@@ -134,13 +134,26 @@ npx hardhat run scripts/verify-deployment.js --network localhost
 
 ```bash
 # Deploy to Evmos Testnet
-npm run deploy:evmos
+npm run deploy:testnet
 
 # Or manually deploy
 npx hardhat run scripts/deploy.js --network evmosTestnet
 
 # Verify contracts on explorer (optional)
 npx hardhat verify --network evmosTestnet <CONTRACT_ADDRESS>
+```
+
+### Mainnet Deployment
+
+```bash
+# Deploy to Evmos Mainnet
+npm run deploy:evmos
+
+# Or manually deploy
+npx hardhat run scripts/deploy.js --network evmosMainnet
+
+# Verify contracts on explorer (optional)
+npx hardhat verify --network evmosMainnet <CONTRACT_ADDRESS>
 ```
 
 ## 🎨 Frontend Development
