@@ -9,7 +9,7 @@ const SwapInterface = () => {
   // Swap state
   const [fromAmount, setFromAmount] = useState('');
   const [toAmount, setToAmount] = useState('');
-  const [fromToken, setFromToken] = useState('ETH');
+  const [fromToken, setFromToken] = useState('EVMOS');
   const [toToken, setToToken] = useState('USDC');
   const [slippage, setSlippage] = useState('0.5');
   
@@ -42,7 +42,7 @@ const SwapInterface = () => {
   // Get provider from window.ethereum
   const getProvider = useCallback(() => {
     if (window.ethereum && isConnected) {
-      return new ethers.BrowserProvider(window.ethereum);
+      return new ethers.providers.Web3Provider(window.ethereum);
     }
     return null;
   }, [isConnected]);
@@ -68,13 +68,13 @@ const SwapInterface = () => {
         if (token.isNative) {
           // Get native balance
           const balance = await provider.getBalance(account);
-          newBalances[token.symbol] = ethers.formatUnits(balance, token.decimals);
+          newBalances[token.symbol] = ethers.utils.formatUnits(balance, token.decimals);
           console.log(`${token.symbol} balance:`, newBalances[token.symbol]);
         } else {
           // Get ERC20 balance
           const tokenContract = new ethers.Contract(token.address, ERC20_ABI, provider);
           const balance = await tokenContract.balanceOf(account);
-          newBalances[token.symbol] = ethers.formatUnits(balance, token.decimals);
+          newBalances[token.symbol] = ethers.utils.formatUnits(balance, token.decimals);
           console.log(`${token.symbol} balance:`, newBalances[token.symbol]);
         }
       } catch (error) {
@@ -108,9 +108,7 @@ const SwapInterface = () => {
       const quote = await getSwapQuote(fromToken, toToken, fromAmount, provider);
       
       if (quote) {
-        // Format to reasonable precision for display
-        const outputAmount = parseFloat(quote.amountOut);
-        setToAmount(outputAmount.toFixed(6));
+        setToAmount(quote.amountOut.toFixed(6));
         setExchangeRate(quote.exchangeRate);
         setPriceImpact(quote.priceImpact);
 
@@ -141,7 +139,7 @@ const SwapInterface = () => {
     if (!isOnEvmosNetwork) {
       const switched = await switchToEvmosNetwork();
       if (!switched) {
-        alert('Please switch to the correct network to continue');
+        alert('Please switch to Evmos network to continue');
         return;
       }
     }
@@ -428,7 +426,7 @@ const SwapInterface = () => {
               </div>
               {!isOnEvmosNetwork && (
                 <div className="mt-2 p-2 bg-yellow-500/20 border border-yellow-400/30 rounded">
-                  <p className="text-yellow-300 text-xs">Please switch to the correct network</p>
+                  <p className="text-yellow-300 text-xs">Please switch to Evmos network</p>
                 </div>
               )}
             </div>
