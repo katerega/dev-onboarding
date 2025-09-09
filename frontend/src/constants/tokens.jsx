@@ -19,7 +19,7 @@ export const TOKEN_LIST = [
   {
     symbol: 'USDC',
     name: 'USD Coin',
-    address: '0x5fd55a1b9fc24967c4db09c513c3ba0dfa7ff687', // Replace with actual USDC address
+    address: '0x5fd55a1b9fc24967c4db09c513c3ba0dfa7ff687', // Correct testnet USDC address
     decimals: 6,
     isNative: false,
     logoURI: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png'

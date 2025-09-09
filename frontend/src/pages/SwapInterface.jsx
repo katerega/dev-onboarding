@@ -156,7 +156,7 @@ const SwapInterface = () => {
   // Estimate gas cost
   const estimateGas = async () => {
     // Simplified gas estimation
-    // In a real implementation, you would use provider.estimateGas()
+    
     setGasEstimate('2.50'); // Placeholder value
   };
 
@@ -258,7 +258,7 @@ const SwapInterface = () => {
       // Refresh balances
       fetchBalances();
       
-      // Show success message
+      
       alert('Swap completed successfully!');
       
     } catch (error) {
