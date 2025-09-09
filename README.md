@@ -67,8 +67,8 @@ Edit the `.env` file with your configuration:
 PRIVATE_KEY="your_private_key_here_64_characters"
 
 # Network Configuration
-EVMOS_TESTNET_RPC="https://eth.bd.evmos.dev:8545"
-EVMOS_MAINNET_RPC="https://eth.bd.evmos.org:8545"
+EVMOS_TESTNET_RPC="https://evmos-testnet-evm.publicnode.com"
+EVMOS_MAINNET_RPC="https://evmos-evm.publicnode.com"
 
 # Contract Addresses (will be populated after deployment)
 FACTORY_ADDRESS=""
@@ -82,10 +82,10 @@ Add Evmos Testnet to MetaMask:
 
 ```
 Network Name: Evmos Testnet
-RPC URL: https://eth.bd.evmos.dev:8545
+RPC URL: https://evmos-testnet-evm.publicnode.com
 Chain ID: 9000
 Currency Symbol: EVMOS
-Block Explorer: https://evm.evmos.dev
+Block Explorer: https://evm.evmos.org
 ```
 
 ### 4. Get Testnet Tokens
@@ -125,9 +125,6 @@ npx hardhat node
 
 # Terminal 2 - Deploy contracts to local network
 npx hardhat run scripts/deploy.js --network localhost
-
-# Verify deployment worked
-npx hardhat run scripts/verify-deployment.js --network localhost
 ```
 
 ### Testnet Deployment
@@ -196,8 +193,8 @@ npm run lint:fix
 
 | Network | Chain ID | RPC URL |
 |---------|----------|---------|
-| Evmos Testnet | 9000 | https://eth.bd.evmos.dev:8545 |
-| Evmos Mainnet | 9001 | https://eth.bd.evmos.org:8545 |
+| Evmos Testnet | 9000 | https://evmos-testnet-evm.publicnode.com |
+| Evmos Mainnet | 9001 | https://evmos-evm.publicnode.com |
 
 
 ## 📁 Project Scripts
@@ -209,7 +206,8 @@ npm run lint:fix
 npm run compile          # Compile contracts
 npm run test            # Run contract tests
 npm run deploy:local    # Deploy to local network
-npm run deploy:evmos    # Deploy to Evmos testnet
+npm run deploy:testnet  # Deploy to Evmos testnet
+npm run deploy:evmos    # Deploy to Evmos mainnet
 ```
 
 ### Frontend Scripts
@@ -250,8 +248,8 @@ npm run lint            # Check code quality
 We welcome contributions! Please follow these steps:
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+2. Create a feature branch (`git checkout -b feat/amazing-feature`)
 3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
+4. Push to the branch (`git push origin feat/amazing-feature`)
 5. Open a Pull Request
 
