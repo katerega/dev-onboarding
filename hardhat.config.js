@@ -12,30 +12,49 @@ module.exports = {
     }
   },
   networks: {
-    // Evmos Testnet - Multiple endpoints to try
+    // Evmos Testnet - Updated working endpoints
     evmosTestnet: {
-      url: process.env.RPC_URL_EVMOS,
+      url: process.env.EVMOS_TESTNET_RPC || "https://eth.bd.evmos.dev:8545",
       accounts: [process.env.PRIVATE_KEY],
       chainId: 9000,
-      timeout: 60000,
-      gas: 2100000,
-      gasPrice: 1000000000
+      timeout: 120000,
+      gas: 'auto',
+      gasPrice: 'auto',
+      gasMultiplier: 1.2
     },
     evmosTestnet2: {
-      url: "https://evmos-testnet-rpc.polkachu.com", 
+      url: "https://evmos-testnet-evm.publicnode.com", 
       accounts: [process.env.PRIVATE_KEY],
       chainId: 9000,
-      timeout: 60000,
-      gas: 2100000,
-      gasPrice: 1000000000
+      timeout: 120000,
+      gas: 'auto',
+      gasPrice: 'auto'
     },
-    evmosTestnet3: {
-      url: "https://evmos-testnet.lava.build",
-      accounts: [process.env.PRIVATE_KEY], 
-      chainId: 9000,
-      timeout: 60000,
-      gas: 2100000,
-      gasPrice: 1000000000
+    // Evmos Mainnet - Working endpoints first
+    evmosMainnet: {
+      url: "https://evmos-evm.publicnode.com",
+      accounts: [process.env.PRIVATE_KEY],
+      chainId: 9001,
+      timeout: 120000,
+      gas: 'auto',
+      gasPrice: 'auto',
+      gasMultiplier: 1.2
+    },
+    evmosMainnet2: {
+      url: process.env.EVMOS_MAINNET_RPC || "https://eth.bd.evmos.org:8545",
+      accounts: [process.env.PRIVATE_KEY],
+      chainId: 9001,
+      timeout: 120000,
+      gas: 'auto',
+      gasPrice: 'auto'
+    },
+    evmosMainnet3: {
+      url: "https://evmos-rpc.gateway.pokt.network",
+      accounts: [process.env.PRIVATE_KEY],
+      chainId: 9001,
+      timeout: 120000,
+      gas: 'auto',
+      gasPrice: 'auto'
     },
     // Backup networks for testing
     polygonMumbai: {
