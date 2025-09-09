@@ -23,6 +23,7 @@
     "hardhat": "^2.12.7"
   },
   "dependencies": {
-    "dotenv": "^17.2.2"
+    "dotenv": "^17.2.2",
+    "ethers":"^6.15.0"
   }
 }
