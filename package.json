@@ -4,8 +4,11 @@
   "scripts": {
     "compile": "npx hardhat compile",
     "test": "npx hardhat test",
+    "test-rpc": "npx hardhat run scripts/test-rpc.js --network evmosMainnet",
+    "test-rpc-testnet": "npx hardhat run scripts/test-rpc.js --network evmosTestnet",
     "deploy:localhost": "npx hardhat run scripts/deploy.js --network localhost",
-    "deploy:evmos": "npx hardhat run scripts/deploy.js --network evmosTestnet",
+    "deploy:evmos": "npx hardhat run scripts/deploy.js --network evmosMainnet",
+    "deploy:testnet": "npx hardhat run scripts/deploy.js --network evmosTestnet",
     "deploy:mumbai": "npx hardhat run scripts/deploy.js --network mumbai",
     "node": "npx hardhat node",
     "clean": "npx hardhat clean"
