@@ -34,18 +34,18 @@ async function main() {
   }
 
   // Use correct WETH address for the network
-  let WETH_ADDRESS;
-  if (network.chainId === 9001) {
-    // Evmos Mainnet WETH
-    WETH_ADDRESS =
-      process.env.WETH_ADDRESS || "0xD4949664cD82660AaE99bEdc034a0deA8A0bd517";
-  } else if (network.chainId === 9000) {
-    // Evmos Testnet WETH
-    WETH_ADDRESS =
-      process.env.WETH_ADDRESS || "0xc778417E063141139Fce010982780140Aa0cD5Ab";
-  } else {
-    throw new Error("❌ Unsupported network for deployment");
-  }
+  let WETH_ADDRESS = process.env.WETH_ADDRESS || "";
+  // if (network.chainId === 9001) {
+  //   // Evmos Mainnet WETH
+  //   WETH_ADDRESS =
+  //     process.env.WETH_ADDRESS || "0xD4949664cD82660AaE99bEdc034a0deA8A0bd517";
+  // } else if (network.chainId === 9000) {
+  //   // Evmos Testnet WETH
+  //   WETH_ADDRESS =
+  //     process.env.WETH_ADDRESS || "0xc778417E063141139Fce010982780140Aa0cD5Ab";
+  // } else {
+  //   throw new Error("❌ Unsupported network for deployment");
+  // }
 
   console.log("🔗 Using WETH address:", WETH_ADDRESS);
 
