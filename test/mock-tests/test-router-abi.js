@@ -4,7 +4,7 @@ async function main() {
   const [deployer] = await ethers.getSigners();
   
   // Load deployment info
-  const deploymentInfo = require('../deployment-info.json');
+  const deploymentInfo = require('../../deployment-info.json');
   const ROUTER_ADDRESS = deploymentInfo.contracts.TradeSphereRouter;
   
   try {

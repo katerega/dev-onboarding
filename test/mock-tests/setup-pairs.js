@@ -4,7 +4,7 @@ async function main() {
   console.log("Setting up initial trading pairs...");
 
   // Get the deployed contract addresses
-  const deploymentInfo = require('../deployment-info.json');
+  const deploymentInfo = require('../../deployment-info.json');
   const factoryAddress = deploymentInfo.contracts.TradeSphereFactory;
   const routerAddress = deploymentInfo.contracts.TradeSphereRouter;
   const wethAddress = deploymentInfo.contracts.WETH;

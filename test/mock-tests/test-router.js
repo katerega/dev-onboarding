@@ -5,7 +5,7 @@ async function main() {
   console.log("Using account:", deployer.address);
 
   // Load deployment info
-  const deploymentInfo = require('../deployment-info.json');
+  const deploymentInfo = require('../../deployment-info.json');
   const ROUTER_ADDRESS = deploymentInfo.contracts.TradeSphereRouter;
   
   console.log("Router address:", ROUTER_ADDRESS);
