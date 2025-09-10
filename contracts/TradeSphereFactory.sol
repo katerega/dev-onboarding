@@ -33,7 +33,7 @@ contract TradeSphereFactory {
             pair := create2(0, add(bytecode, 32), mload(bytecode), salt)
         }
         
-        ITradeSpherePair(pair).initialize(token0, token1);
+        TradeSpherePair(pair).initialize(token0, token1);
         getPair[token0][token1] = pair;
         getPair[token1][token0] = pair;
         allPairs.push(pair);
@@ -50,8 +50,4 @@ contract TradeSphereFactory {
         require(msg.sender == feeToSetter, 'TradeSphere: FORBIDDEN');
         feeToSetter = _feeToSetter;
     }
-}
-
-interface ITradeSpherePair {
-    function initialize(address, address) external;
 }

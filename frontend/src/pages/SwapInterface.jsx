@@ -1,80 +1,55 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ethers } from 'ethers';
-import { ROUTER_ABI, ERC20_ABI } from '../constants/abis';
+import { useWalletContext } from '../hooks/useWalletContext';
+import { useSwap } from '../hooks/useSwap';
 import { TOKEN_LIST } from '../constants/tokens';
+import { ERC20_ABI } from '../constants/abis';
 
 const SwapInterface = () => {
+  // Swap state
   const [fromAmount, setFromAmount] = useState('');
   const [toAmount, setToAmount] = useState('');
-  const [fromToken, setFromToken] = useState('EVMOS');
+  const [fromToken, setFromToken] = useState('ETH');
   const [toToken, setToToken] = useState('USDC');
   const [slippage, setSlippage] = useState('0.5');
-  const [isWalletConnected, setIsWalletConnected] = useState(false);
-  const [account, setAccount] = useState(null);
-  const [provider, setProvider] = useState(null);
+  
+  // Quote and transaction state
   const [balances, setBalances] = useState({});
   const [exchangeRate, setExchangeRate] = useState(null);
   const [gasEstimate, setGasEstimate] = useState(null);
+  const [priceImpact, setPriceImpact] = useState(null);
+  const [isGettingQuote, setIsGettingQuote] = useState(false);
+  const [quoteError, setQuoteError] = useState(null);
 
-  // Get environment variables safely
-//   const ROUTER_ADDRESS = import.meta.env.VITE_ROUTER_ADDRESS || '';
+  // Get wallet context and swap functionality
+  const walletContext = useWalletContext();
+  const { 
+    account, 
+    isConnected, 
+    connectWallet, 
+    isOnEvmosNetwork,
+    switchToEvmosNetwork 
+  } = walletContext;
 
-  const ROUTER_ADDRESS = import.meta.env.VITE_ROUTER_ADDRESS || '';
+  const { 
+    getSwapQuote, 
+    executeSwap, 
+    estimateSwapGas, 
+    isSwapping, 
+    swapError 
+  } = useSwap(walletContext);
 
-  // Connect wallet function
-  const handleConnectWallet = async () => {
-    if (window.ethereum) {
-      try {
-        await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
-        setProvider(web3Provider);
-        
-        const signer = web3Provider.getSigner();
-        const address = await signer.getAddress();
-        setAccount(address);
-        setIsWalletConnected(true);
-        
-        // Check if connected to Evmos
-        const network = await web3Provider.getNetwork();
-        if (network.chainId !== 9001 && network.chainId !== 9000) {
-          alert('Please switch to Evmos network');
-          await switchToEvmosNetwork();
-        }
-        
-        // Fetch balances after connecting
-        fetchBalances();
-      } catch (error) {
-        console.error('Error connecting wallet:', error);
-      }
-    } else {
-      alert('Please install MetaMask or another Web3 wallet');
+  // Get provider from window.ethereum
+  const getProvider = useCallback(() => {
+    if (window.ethereum && isConnected) {
+      return new ethers.BrowserProvider(window.ethereum);
     }
-  };
-
-  // Switch to Evmos network
-  const switchToEvmosNetwork = async () => {
-    try {
-      await window.ethereum.request({
-        method: 'wallet_addEthereumChain',
-        params: [{
-          chainId: '0x2329', // 9001 in hex for mainnet
-          chainName: 'Evmos',
-          nativeCurrency: {
-            name: 'Evmos',
-            symbol: 'EVMOS',
-            decimals: 18
-          },
-          rpcUrls: ['https://eth.bd.evmos.org:8545'],
-          blockExplorerUrls: ['https://evm.evmos.org/']
-        }]
-      });
-    } catch (error) {
-      console.error('Error switching to Evmos:', error);
-    }
-  };
+    return null;
+  }, [isConnected]);
 
   // Fetch token balances
   const fetchBalances = useCallback(async () => {
+    const provider = getProvider();
     if (!provider || !account) return;
     
     console.log("Fetching balances for:", account);
@@ -93,13 +68,13 @@ const SwapInterface = () => {
         if (token.isNative) {
           // Get native balance
           const balance = await provider.getBalance(account);
-          newBalances[token.symbol] = ethers.utils.formatUnits(balance, token.decimals);
+          newBalances[token.symbol] = ethers.formatUnits(balance, token.decimals);
           console.log(`${token.symbol} balance:`, newBalances[token.symbol]);
         } else {
           // Get ERC20 balance
           const tokenContract = new ethers.Contract(token.address, ERC20_ABI, provider);
           const balance = await tokenContract.balanceOf(account);
-          newBalances[token.symbol] = ethers.utils.formatUnits(balance, token.decimals);
+          newBalances[token.symbol] = ethers.formatUnits(balance, token.decimals);
           console.log(`${token.symbol} balance:`, newBalances[token.symbol]);
         }
       } catch (error) {
@@ -109,164 +84,116 @@ const SwapInterface = () => {
     }
     
     setBalances(newBalances);
-  }, [provider, account]);
+  }, [getProvider, account]);
 
-  // Get swap quote - wrapped in useCallback to fix dependency warning
-  const getSwapQuote = useCallback(async () => {
-    if (!provider || !fromAmount || fromAmount <= 0 || !ROUTER_ADDRESS) {
+  // Get swap quote with improved error handling
+  const handleGetQuote = useCallback(async () => {
+    if (!fromAmount || parseFloat(fromAmount) <= 0) {
       setToAmount('');
       setExchangeRate(null);
+      setPriceImpact(null);
+      setGasEstimate(null);
       return;
     }
-    
+
+    setIsGettingQuote(true);
+    setQuoteError(null);
+
     try {
-      const router = new ethers.Contract(
-        ROUTER_ADDRESS,
-        ROUTER_ABI,
-        provider
-      );
+      const provider = getProvider();
+      if (!provider) {
+        throw new Error('No provider available');
+      }
+
+      const quote = await getSwapQuote(fromToken, toToken, fromAmount, provider);
       
-      const fromTokenInfo = TOKEN_LIST.find(t => t.symbol === fromToken);
-      const toTokenInfo = TOKEN_LIST.find(t => t.symbol === toToken);
-      
-      if (!fromTokenInfo || !toTokenInfo) return;
-      
-      const amountIn = ethers.utils.parseUnits(fromAmount, fromTokenInfo.decimals);
-      const path = [fromTokenInfo.address, toTokenInfo.address];
-      
-      // Get amounts out
-      const amounts = await router.getAmountsOut(amountIn, path);
-      const amountOut = ethers.utils.formatUnits(amounts[1], toTokenInfo.decimals);
-      
-      setToAmount(amountOut);
-      
-      // Calculate exchange rate
-      const rate = amountOut / fromAmount;
-      setExchangeRate(rate);
-      
-      // Estimate gas (simplified)
-      estimateGas();
+      if (quote) {
+        // Format to reasonable precision for display
+        const outputAmount = parseFloat(quote.amountOut);
+        setToAmount(outputAmount.toFixed(6));
+        setExchangeRate(quote.exchangeRate);
+        setPriceImpact(quote.priceImpact);
+
+        // Get gas estimate
+        const gasEst = await estimateSwapGas(fromToken, toToken, fromAmount, provider);
+        if (gasEst) {
+          setGasEstimate(gasEst.gasCostUSD);
+        }
+      }
     } catch (error) {
       console.error('Error getting quote:', error);
+      setQuoteError(error.message);
       setToAmount('');
       setExchangeRate(null);
+      setPriceImpact(null);
+    } finally {
+      setIsGettingQuote(false);
     }
-  }, [provider, fromAmount, fromToken, toToken, ROUTER_ADDRESS]);
+  }, [fromAmount, fromToken, toToken, getProvider, getSwapQuote, estimateSwapGas]);
 
-  // Estimate gas cost
-  const estimateGas = async () => {
-    // Simplified gas estimation
-    
-    setGasEstimate('2.50'); // Placeholder value
-  };
-
-  // Execute swap
+  // Execute swap with enhanced error handling
   const handleSwap = async () => {
-    if (!isWalletConnected) {
-      handleConnectWallet();
+    if (!isConnected) {
+      await connectWallet();
       return;
     }
-    
-    if (!provider || !fromAmount || fromAmount <= 0 || !ROUTER_ADDRESS) return;
-    
-    try {
-      const signer = provider.getSigner();
-      const router = new ethers.Contract(
-        ROUTER_ADDRESS,
-        ROUTER_ABI,
-        signer
-      );
-      
-      const fromTokenInfo = TOKEN_LIST.find(t => t.symbol === fromToken);
-      const toTokenInfo = TOKEN_LIST.find(t => t.symbol === toToken);
-      
-      if (!fromTokenInfo || !toTokenInfo) return;
-      
-      const amountIn = ethers.utils.parseUnits(fromAmount, fromTokenInfo.decimals);
-      const amountOutMin = ethers.utils.parseUnits(
-        (toAmount * (100 - parseFloat(slippage)) / 100).toString(),
-        toTokenInfo.decimals
-      );
-      
-      const path = [fromTokenInfo.address, toTokenInfo.address];
-      const to = account;
-      const deadline = Math.floor(Date.now() / 1000) + (20 * 60); // 20 minutes
-      
-      let tx;
-      
-      // If swapping from native token
-      if (fromTokenInfo.isNative) {
-        tx = await router.swapExactETHForTokens(
-          amountOutMin,
-          path,
-          to,
-          deadline,
-          { value: amountIn }
-        );
-      } 
-      // If swapping to native token
-      else if (toTokenInfo.isNative) {
-        // First approve token spending if needed
-        const tokenContract = new ethers.Contract(
-          fromTokenInfo.address,
-          ERC20_ABI,
-          signer
-        );
-        
-        const allowance = await tokenContract.allowance(account, router.address);
-        if (allowance.lt(amountIn)) {
-          const approveTx = await tokenContract.approve(router.address, amountIn);
-          await approveTx.wait();
-        }
-        
-        tx = await router.swapExactTokensForETH(
-          amountIn,
-          amountOutMin,
-          path,
-          to,
-          deadline
-        );
-      } 
-      // Token to token swap
-      else {
-        // First approve token spending if needed
-        const tokenContract = new ethers.Contract(
-          fromTokenInfo.address,
-          ERC20_ABI,
-          signer
-        );
-        
-        const allowance = await tokenContract.allowance(account, router.address);
-        if (allowance.lt(amountIn)) {
-          const approveTx = await tokenContract.approve(router.address, amountIn);
-          await approveTx.wait();
-        }
-        
-        tx = await router.swapExactTokensForTokens(
-          amountIn,
-          amountOutMin,
-          path,
-          to,
-          deadline
-        );
+
+    if (!isOnEvmosNetwork) {
+      const switched = await switchToEvmosNetwork();
+      if (!switched) {
+        alert('Please switch to the correct network to continue');
+        return;
       }
-      
-      // Wait for transaction confirmation
-      const receipt = await tx.wait();
-      console.log('Swap completed:', receipt.transactionHash);
-      
-      // Refresh balances
-      fetchBalances();
-      
-      
-      alert('Swap completed successfully!');
-      
+    }
+
+    if (!fromAmount || parseFloat(fromAmount) <= 0) {
+      alert('Please enter a valid amount');
+      return;
+    }
+
+    try {
+      const provider = getProvider();
+      if (!provider) {
+        throw new Error('No provider available');
+      }
+
+      const result = await executeSwap(
+        fromToken,
+        toToken,
+        fromAmount,
+        null, // Let the hook calculate amountOutMin
+        slippage,
+        provider
+      );
+
+      if (result.success) {
+        alert(`Swap completed successfully! Transaction: ${result.transactionHash}`);
+        
+        // Refresh balances and reset form
+        await fetchBalances();
+        setFromAmount('');
+        setToAmount('');
+        setExchangeRate(null);
+        setPriceImpact(null);
+        setGasEstimate(null);
+      }
     } catch (error) {
-      console.error('Error executing swap:', error);
-      alert('Swap failed: ' + (error.message || 'Unknown error'));
+      console.error('Swap failed:', error);
+      alert(`Swap failed: ${error.message}`);
     }
   };
 
+  // Handle wallet connection
+  const handleConnectWallet = async () => {
+    try {
+      await connectWallet();
+    } catch (error) {
+      console.error('Failed to connect wallet:', error);
+      alert('Failed to connect wallet. Please try again.');
+    }
+  };
+
+  // Swap token positions
   const handleSwapTokens = () => {
     const tempToken = fromToken;
     const tempAmount = fromAmount;
@@ -278,15 +205,19 @@ const SwapInterface = () => {
 
   // Update quote when inputs change
   useEffect(() => {
-    getSwapQuote();
-  }, [getSwapQuote]);
+    const timer = setTimeout(() => {
+      handleGetQuote();
+    }, 500); // Debounce quotes by 500ms
+
+    return () => clearTimeout(timer);
+  }, [handleGetQuote]);
 
   // Fetch balances when account changes
   useEffect(() => {
-    if (account) {
+    if (account && isConnected) {
       fetchBalances();
     }
-  }, [account, fetchBalances]);
+  }, [account, isConnected, fetchBalances]);
 
   return (
     <section className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
@@ -311,6 +242,13 @@ const SwapInterface = () => {
               </button>
             </div>
           </div>
+
+          {/* Error Display */}
+          {(quoteError || swapError) && (
+            <div className="mb-4 p-3 bg-red-500/20 border border-red-400/30 rounded-lg">
+              <p className="text-red-300 text-sm">{quoteError || swapError}</p>
+            </div>
+          )}
 
           {/* From Token */}
           <div className="bg-slate-700/50 border border-blue-400/20 rounded-xl p-4 mb-1">
@@ -365,15 +303,20 @@ const SwapInterface = () => {
                 Balance: {balances[toToken] || '0.0'}
               </span>
             </div>
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0 relative">
               <input
                 type="number"
                 value={toAmount}
-                onChange={(e) => setToAmount(e.target.value)}
                 placeholder="0.0"
                 className="bg-transparent text-white text-xl sm:text-2xl font-semibold outline-none flex-1 sm:mr-4"
                 readOnly
               />
+              {isGettingQuote && (
+                <div className="absolute left-0 top-0 flex items-center">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-300"></div>
+                  <span className="ml-2 text-blue-300 text-sm">Getting quote...</span>
+                </div>
+              )}
               <div className="flex items-center justify-end sm:justify-start">
                 <select
                   value={toToken}
@@ -436,6 +379,12 @@ const SwapInterface = () => {
                 <span className="text-white">{gasEstimate ? `~$${gasEstimate}` : 'Estimating...'}</span>
               </div>
               <div className="flex justify-between text-sm">
+                <span className="text-blue-300">Price Impact</span>
+                <span className={`${priceImpact > 1 ? 'text-yellow-300' : priceImpact > 3 ? 'text-red-300' : 'text-green-300'}`}>
+                  {priceImpact ? `${priceImpact.toFixed(2)}%` : 'Calculating...'}
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
                 <span className="text-blue-300">Minimum Received</span>
                 <span className="text-white">
                   {toAmount ? `${(toAmount * (100 - parseFloat(slippage)) / 100).toFixed(6)} ${toToken}` : '0.0'}
@@ -450,17 +399,17 @@ const SwapInterface = () => {
 
           {/* Swap Button */}
           <button
-            onClick={handleSwap}
-            disabled={!fromAmount || fromAmount === '0'}
+            onClick={isConnected ? handleSwap : handleConnectWallet}
+            disabled={isSwapping || isGettingQuote || (!fromAmount || fromAmount === '0')}
             className={`w-full py-4 rounded-xl font-semibold text-lg transition-all ${
-              !fromAmount || fromAmount === '0'
+              isSwapping || isGettingQuote || (!fromAmount || fromAmount === '0')
                 ? 'bg-slate-600/50 text-slate-400 cursor-not-allowed'
-                : isWalletConnected
-                ? 'bg-gradient-to-r from-blue-500 to-cyan-400 text-white hover:from-blue-600 hover:to-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-400'
                 : 'bg-gradient-to-r from-blue-500 to-cyan-400 text-white hover:from-blue-600 hover:to-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-400'
             }`}
           >
-            {!isWalletConnected
+            {isSwapping
+              ? 'Swapping...'
+              : !isConnected
               ? 'Connect Wallet'
               : !fromAmount || fromAmount === '0'
               ? 'Enter Amount'
@@ -469,7 +418,7 @@ const SwapInterface = () => {
           </button>
 
           {/* Wallet Status */}
-          {isWalletConnected && (
+          {isConnected && (
             <div className="mt-4 p-3 bg-green-500/20 border border-green-400/30 rounded-lg">
               <div className="flex items-center space-x-2">
                 <div className="w-2 h-2 bg-green-400 rounded-full"></div>
@@ -477,6 +426,11 @@ const SwapInterface = () => {
                   Wallet Connected: {account ? `${account.substring(0, 6)}...${account.substring(account.length - 4)}` : ''}
                 </span>
               </div>
+              {!isOnEvmosNetwork && (
+                <div className="mt-2 p-2 bg-yellow-500/20 border border-yellow-400/30 rounded">
+                  <p className="text-yellow-300 text-xs">Please switch to the correct network</p>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -492,6 +446,7 @@ const SwapInterface = () => {
               <p className="text-blue-200 text-xs leading-relaxed">
                 Always verify token addresses and transaction details before confirming. 
                 This interface interacts directly with your wallet. Double-check all transactions.
+                0.3% fee applies to all swaps.
               </p>
             </div>
           </div>

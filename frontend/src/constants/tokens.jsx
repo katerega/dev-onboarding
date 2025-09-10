@@ -1,17 +1,17 @@
-// Token list for EVMOS
+// Token list for EVMOS and localhost
 export const TOKEN_LIST = [
   {
-    symbol: 'EVMOS',
-    name: 'Evmos',
-    address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', // ETH address
+    symbol: 'ETH',
+    name: 'Ethereum',
+    address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', // Special address for native token
     decimals: 18,
     isNative: true,
     logoURI: 'https://cryptologos.cc/logos/ethereum-eth-logo.png'
   },
   {
-    symbol: 'WEVMOS',
-    name: 'Wrapped Evmos',
-    address: import.meta.env.VITE_WEVMOS_ADDRESS || '',
+    symbol: 'WETH',
+    name: 'Wrapped Ethereum',
+    address: import.meta.env.VITE_WEVMOS_ADDRESS || '0x5eb3Bc0a489C5A8288765d2336659EbCA68FCd00',
     decimals: 18,
     isNative: false,
     logoURI: 'https://cryptologos.cc/logos/ethereum-eth-logo.png'
@@ -19,7 +19,7 @@ export const TOKEN_LIST = [
   {
     symbol: 'USDC',
     name: 'USD Coin',
-    address: '0x5fd55a1b9fc24967c4db09c513c3ba0dfa7ff687', // Correct testnet USDC address
+    address: '0x4c5859f0F772848b2D91F1D83E2Fe57935348029', // Latest deployed USDC with liquidity
     decimals: 6,
     isNative: false,
     logoURI: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png'
@@ -27,7 +27,7 @@ export const TOKEN_LIST = [
   {
     symbol: 'USDT',
     name: 'Tether USD',
-    address: '0xeceeefcee421d8062ef8d6b4d814efe4dc898265', // Replace with actual USDT address  
+    address: '0x4c5859f0F772848b2D91F1D83E2Fe57935348029', // Using same as USDC for testing
     decimals: 6,
     isNative: false,
     logoURI: 'https://cryptologos.cc/logos/tether-usdt-logo.png'

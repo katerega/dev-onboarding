@@ -25,6 +25,18 @@ const EVMOS_MAINNET = {
   blockExplorerUrls: ['https://evm.evmos.org'],
 }
 
+const LOCALHOST_NETWORK = {
+  chainId: '0x7a69', // 31337 in hex (Hardhat)
+  chainName: 'Localhost 8545',
+  nativeCurrency: {
+    name: 'Ethereum',
+    symbol: 'ETH',
+    decimals: 18,
+  },
+  rpcUrls: ['http://localhost:8545'],
+  blockExplorerUrls: ['http://localhost:8545'],
+}
+
 export const useWallet = () => {
   const [account, setAccount] = useState(null)
   const [isConnecting, setIsConnecting] = useState(false)
@@ -46,7 +58,7 @@ export const useWallet = () => {
 
   // Check if on correct network
   const isOnEvmosNetwork = useCallback(() => {
-    return chainId === '0x2328' || chainId === '0x2329' // Testnet or Mainnet
+    return chainId === '0x2328' || chainId === '0x2329' || chainId === '0x7a69' // Testnet, Mainnet, or Localhost
   }, [chainId])
 
   // Get account balance
@@ -82,9 +94,23 @@ export const useWallet = () => {
     }
   }, [])
 
-  // Switch to EVMOS network
+  // Switch to EVMOS or localhost network
   const switchToEvmosNetwork = useCallback(async () => {
     try {
+      // In development, try localhost first
+      if (import.meta.env.DEV || window.location.hostname === 'localhost') {
+        try {
+          await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: LOCALHOST_NETWORK.chainId }],
+          })
+          return true
+        } catch {
+          console.log('Localhost network not available, trying Evmos...')
+        }
+      }
+      
+      // Try Evmos network
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: EVMOS_NETWORK.chainId }],
@@ -95,7 +121,7 @@ export const useWallet = () => {
       if (error.code === 4902) {
         return await addEvmosNetwork()
       }
-      console.error('Error switching to EVMOS network:', error)
+      console.error('Error switching network:', error)
       return false
     }
   }, [addEvmosNetwork])
