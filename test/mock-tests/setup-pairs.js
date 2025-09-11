@@ -46,9 +46,8 @@ async function main() {
   console.log("✅ Minted test tokens");
 
   // Approve tokens for router
-  await usdc.approve(router.address, usdcAmount);
-  await usdt.approve(router.address, usdtAmount);
-  await weth.approve(router.address, ethAmount);
+  await usdc.approve(router.address, ethers.constants.MaxUint256);
+  await usdt.approve(router.address, ethers.constants.MaxUint256);
   console.log("✅ Approved tokens for router");
 
   const deadline = Math.floor(Date.now() / 1000) + (20 * 60); // 20 minutes
@@ -58,15 +57,15 @@ async function main() {
   const ethForUsdc = ethers.utils.parseEther("50"); // 50 ETH
   const usdcForEth = ethers.utils.parseUnits("100000", 6); // 100,000 USDC
 
-  await router.addLiquidity(
-    weth.address,
-    usdc.address,
-    ethForUsdc,
-    usdcForEth,
-    ethers.utils.parseEther("49"), // min ETH
-    ethers.utils.parseUnits("99000", 6), // min USDC
-    deployer.address,
-    deadline
+  // Use addLiquidityETH for native ETH (WETH) pairs
+  await router.addLiquidityETH(
+    usdc.address, // token address
+    usdcForEth, // amount of token desired
+    ethers.utils.parseUnits("99000", 6), // min token amount
+    ethForUsdc, // min ETH amount
+    deployer.address, // to
+    deadline,
+    { value: ethForUsdc, gasLimit: 3000000 } // send ETH with the transaction
   );
   console.log("✅ Added WETH/USDC liquidity");
 
@@ -75,15 +74,14 @@ async function main() {
   const ethForUsdt = ethers.utils.parseEther("50"); // 50 ETH
   const usdtForEth = ethers.utils.parseUnits("100000", 6); // 100,000 USDT
 
-  await router.addLiquidity(
-    weth.address,
-    usdt.address,
-    ethForUsdt,
-    usdtForEth,
-    ethers.utils.parseEther("49"), // min ETH
-    ethers.utils.parseUnits("99000", 6), // min USDT
-    deployer.address,
-    deadline
+  await router.addLiquidityETH(
+    usdt.address, // token address
+    usdtForEth, // amount of token desired
+    ethers.utils.parseUnits("99000", 6), // min token amount
+    ethForUsdt, // min ETH amount
+    deployer.address, // to
+    deadline,
+    { value: ethForUsdt, gasLimit: 3000000 } // send ETH with the transaction
   );
   console.log("✅ Added WETH/USDT liquidity");
 

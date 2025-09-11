@@ -1,19 +1,19 @@
 {
   "network": "Unknown Network (31337)",
   "chainId": 31337,
-  "timestamp": "2025-09-10T05:38:48.236Z",
+  "timestamp": "2025-09-11T08:29:29.677Z",
   "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
   "contracts": {
-    "TradeSphereFactory": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-    "TradeSphereRouter": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-    "WETH": "0x778e5A0026BFB3283615861DF768072124FCd2f9"
+    "TradeSphereFactory": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+    "TradeSphereRouter": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+    "WETH": "0x5Ed91D8c5FcEcD4C7523916712D7AF4F2Bb7aEE4"
   },
   "transactions": {
-    "factory": "0x93d36fb639fb7d26c458a446768778781dc715e0cd661573c400c74216a11289",
-    "router": "0x2613cf4473cb73b351cd1188bd0b77f15476c07e8efb6d50fee04fd240cb1992"
+    "factory": "0xcf19ed65e3bd59ac97db3e8031a3702dee588cb01c029d4eb23fe3b7977ce461",
+    "router": "0x9d1a32c9de27982e517fea5b378376e3a2ff44b8513caa61118b15ebf5a47b2f"
   },
   "explorers": {
-    "factory": "https://evm.evmos.org/address/0x5FbDB2315678afecb367f032d93F642f64180aa3",
-    "router": "https://evm.evmos.org/address/0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+    "factory": "https://evm.evmos.org/address/0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+    "router": "https://evm.evmos.org/address/0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9"
   }
 }
