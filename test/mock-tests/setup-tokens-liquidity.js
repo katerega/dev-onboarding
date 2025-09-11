@@ -5,13 +5,13 @@ async function completeFreshDeploy() {
   console.log("🧪 TradeSphere Post-Deployment Setup...");
   console.log("📋 Setting up mock tokens, pairs, and liquidity\n");
 
-  // Check if core contracts are deployed
+  // Check if core contracts are deployed.
   let deploymentInfo;
   try {
     deploymentInfo = JSON.parse(fs.readFileSync('deployment-info.json', 'utf8'));
     console.log("✅ Found existing deployment info");
   } catch (error) {
-    console.log("❌ No deployment-info.json found!");
+    console.log("❌ No deployment-info.json found!!");
     console.log("💡 Please run deployment first:");
     console.log("   npm run deploy:localhost");
     throw new Error("Core contracts not deployed");
