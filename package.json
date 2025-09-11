@@ -10,6 +10,8 @@
     "deploy:evmos": "npx hardhat run scripts/deploy.js --network evmosMainnet",
     "deploy:testnet": "npx hardhat run scripts/deploy.js --network evmosTestnet",
     "deploy:mumbai": "npx hardhat run scripts/deploy.js --network mumbai",
+    "setup:localhost": "npx hardhat run test/mock-tests/setup-tokens-liquidity.js --network localhost",
+    "dev:full": "npm run deploy:localhost && npm run setup:localhost",
     "node": "npx hardhat node",
     "clean": "npx hardhat clean"
   },
