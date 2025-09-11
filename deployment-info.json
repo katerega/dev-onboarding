@@ -1,19 +1,46 @@
 {
-  "network": "Unknown Network (31337)",
+  "network": "Localhost",
   "chainId": 31337,
-  "timestamp": "2025-09-10T05:38:48.236Z",
+  "timestamp": "2025-09-11T09:52:26.205Z",
   "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
   "contracts": {
-    "TradeSphereFactory": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-    "TradeSphereRouter": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-    "WETH": "0x778e5A0026BFB3283615861DF768072124FCd2f9"
+    "TradeSphereFactory": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+    "TradeSphereRouter": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+    "WETH": "0x5FbDB2315678afecb367f032d93F642f64180aa3"
   },
   "transactions": {
-    "factory": "0x93d36fb639fb7d26c458a446768778781dc715e0cd661573c400c74216a11289",
-    "router": "0x2613cf4473cb73b351cd1188bd0b77f15476c07e8efb6d50fee04fd240cb1992"
+    "factory": "0xb6f86b2113f49bc3200c2de87cb295efbf16dd2fe0772ad18e775b650d857ed8",
+    "router": "0xbe16df71c8f71e53465b2bd0bee8ec75525c6f0715f71ce62a6124a97fb91bdd",
+    "weth": "0x92c062e361ea552a09f152521cf0ce6388d4622e12f4d3eb32df84f19d1d3216"
   },
   "explorers": {
-    "factory": "https://evm.evmos.org/address/0x5FbDB2315678afecb367f032d93F642f64180aa3",
-    "router": "https://evm.evmos.org/address/0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
-  }
+    "factory": "http://localhost:8545/address/0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+    "router": "http://localhost:8545/address/0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9"
+  },
+  "tokens": {
+    "WETH": {
+      "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      "name": "Wrapped Ether",
+      "symbol": "WETH",
+      "decimals": 18
+    },
+    "USDC": {
+      "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+      "name": "USD Coin",
+      "symbol": "USDC",
+      "decimals": 6
+    },
+    "USDT": {
+      "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+      "name": "Tether USD",
+      "symbol": "USDT",
+      "decimals": 6
+    }
+  },
+  "pairs": {
+    "WETH/USDC": "0x7cc0572AEd93b07b97FDcee836b61d57253AB85f",
+    "WETH/USDT": "0x81CbB155CEe8c06F5A95df2B6dBDbc8D926F2f8F"
+  },
+  "setupComplete": true,
+  "setupTimestamp": "2025-09-11T09:52:28.587Z"
 }
