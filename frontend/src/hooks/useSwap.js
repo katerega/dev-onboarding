@@ -11,7 +11,7 @@ export const useSwap = (walletContext) => {
   const { account, isConnected } = walletContext;
 
   // Get router address from environment...
-  const ROUTER_ADDRESS = import.meta.env.VITE_ROUTER_ADDRESS || '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9';
+  const ROUTER_ADDRESS = import.meta.env.VITE_ROUTER_ADDRESS || '0xa513E6E4b8f2a923D98304ec87F64353C4D5C853';
 
   console.log('Using ROUTER_ADDRESS:', ROUTER_ADDRESS);
 
