@@ -44,11 +44,11 @@ async function main() {
 
   if (network.chainId === 9001) {
     // Evmos Mainnet - use existing WETH
-    WETH_ADDRESS = process.env.WETH_ADDRESS || "0x778e5A0026BFB3283615861DF768072124FCd2f9";
+    WETH_ADDRESS = process.env.WETH_ADDRESS || "0x5Ed91D8c5FcEcD4C7523916712D7AF4F2Bb7aEE4";
     console.log("🔗 Using existing Mainnet WETH:", WETH_ADDRESS);
   } else if (network.chainId === 9000) {
     // Evmos Testnet - use existing WETH
-    WETH_ADDRESS = process.env.WETH_ADDRESS || "0x778e5A0026BFB3283615861DF768072124FCd2f9";
+    WETH_ADDRESS = process.env.WETH_ADDRESS || "0x5Ed91D8c5FcEcD4C7523916712D7AF4F2Bb7aEE4";
     console.log("🔗 Using existing Testnet WETH:", WETH_ADDRESS);
   } else if (network.chainId === 31337) {
     // Localhost - deploy fresh WETH

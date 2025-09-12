@@ -1,7 +1,7 @@
 {
   "network": "Localhost",
   "chainId": 31337,
-  "timestamp": "2025-09-11T09:52:26.205Z",
+  "timestamp": "2025-09-11T13:53:21.352Z",
   "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
   "contracts": {
     "TradeSphereFactory": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
@@ -42,5 +42,5 @@
     "WETH/USDT": "0x81CbB155CEe8c06F5A95df2B6dBDbc8D926F2f8F"
   },
   "setupComplete": true,
-  "setupTimestamp": "2025-09-11T09:52:28.587Z"
+  "setupTimestamp": "2025-09-11T13:53:27.105Z"
 }

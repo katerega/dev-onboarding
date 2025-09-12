@@ -53,6 +53,7 @@ const SwapInterface = () => {
     if (!provider || !account) return;
     
     console.log("Fetching balances for:", account);
+    console.log("Using provider:", provider);
     
     const newBalances = {};
     
