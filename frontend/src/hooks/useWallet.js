@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
 
-// EVMOS Network Configuration
+// EVMOS Network Configuration.
 const EVMOS_NETWORK = {
-  chainId: '0x2328', // 9000 in hex
+  chainId: '0x2328', // 9000 in hex-decimal
   chainName: 'Evmos Testnet',
   nativeCurrency: {
     name: 'Evmos',
