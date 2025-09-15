@@ -64,7 +64,7 @@ module.exports = {
       timeout: 60000
     },
     sepolia: {
-      url: "https://sepolia.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
+      url: [process.env.SEPOLIA_RPC],
       accounts: [process.env.PRIVATE_KEY],
       chainId: 11155111,
       timeout: 60000
