@@ -124,8 +124,6 @@ async function main() {
   const network = await ethers.provider.getNetwork();
   const chainId = Number(network.chainId);
   const config = NETWORK_CONFIG[chainId];
-
-  console.log(`📡 Network: ${network} (Chain ID: ${chainId})`);
   
   if (!config) {
     throw new Error(`❌ Unsupported network with chain ID: ${chainId}`);
@@ -139,13 +137,13 @@ async function main() {
   const balance = await deployer.getBalance();
   console.log(
     "💰 Account balance:",
-    ethers.formatEther(balance),
+    ethers.utils.formatEther(balance),
     config.currency
   );
 
   // Check minimum balance (skip for localhost)
   if (chainId !== 31337) {
-    const minBalance = ethers.parseEther(config.minBalance);
+    const minBalance = ethers.utils.parseEther(config.minBalance);
     if (balance < minBalance) {
       throw new Error(
         `❌ Insufficient balance for deployment. Need at least ${config.minBalance} ${config.currency}`
@@ -189,10 +187,10 @@ async function main() {
       console.log("✅ WETH deployed to:", WETH_ADDRESS);
 
       // Test WETH functionality
-      const testDeposit = await weth.deposit({ value: ethers.parseEther("1") });
+      const testDeposit = await weth.deposit({ value: ethers.utils.parseEther("1") });
       await testDeposit.wait();
       const testBalance = await weth.balanceOf(deployer.address);
-      console.log("✅ WETH test successful, balance:", ethers.formatEther(testBalance));
+      console.log("✅ WETH test successful, balance:", ethers.utils.formatEther(testBalance));
     }
 
     // 2. Deploy Factory
