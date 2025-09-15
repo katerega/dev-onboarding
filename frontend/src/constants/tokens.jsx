@@ -11,7 +11,7 @@ export const TOKEN_LIST = [
   {
     symbol: 'WETH',
     name: 'Wrapped Ethereum',
-    address: '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9',
+    address: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
     decimals: 18,
     isNative: false,
     logoURI: 'https://cryptologos.cc/logos/ethereum-eth-logo.png'
@@ -19,7 +19,7 @@ export const TOKEN_LIST = [
   {
     symbol: 'USDC',
     name: 'USD Coin',
-    address: '0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6', // Latest deployed USDC with liquidity
+    address: '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9', // Latest deployed USDC with liquidity
     decimals: 6,
     isNative: false,
     logoURI: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png'
@@ -27,7 +27,7 @@ export const TOKEN_LIST = [
   {
     symbol: 'USDT',
     name: 'Tether USD',
-    address: '0x8A791620dd6260079BF849Dc5567aDC3F2FdC318', // Using same as USDC for testing
+    address: '0x5FC8d32690cc91D4c39d9d3abcBD16989F875707', // Using same as USDC for testing
     decimals: 6,
     isNative: false,
     logoURI: 'https://cryptologos.cc/logos/tether-usdt-logo.png'
