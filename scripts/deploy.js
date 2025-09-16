@@ -1,21 +1,135 @@
 const { ethers } = require("hardhat");
 const fs = require("fs");
 
+// Network configuration for multi-chain deployment
+const NETWORK_CONFIG = {
+  1: {
+    name: "Ethereum Mainnet",
+    currency: "ETH",
+    explorer: "https://etherscan.io",
+    weth: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+    minBalance: "0.5", // Higher for mainnet due to gas costs
+    deployWETH: false
+  },
+  5: {
+    name: "Ethereum Goerli",
+    currency: "ETH", 
+    explorer: "https://goerli.etherscan.io",
+    weth: "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
+    minBalance: "0.1",
+    deployWETH: false
+  },
+  11155111: {
+    name: "Ethereum Sepolia",
+    currency: "ETH",
+    explorer: "https://sepolia.etherscan.io", 
+    weth: "0xD4DDB581B3A8732db2B8854f8D6331c0fB366DCE",
+    minBalance: "0.1",
+    deployWETH: false
+  },
+  137: {
+    name: "Polygon Mainnet",
+    currency: "MATIC",
+    explorer: "https://polygonscan.com",
+    weth: "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270", // WMATIC
+    minBalance: "5.0",
+    deployWETH: false
+  },
+  80001: {
+    name: "Polygon Mumbai",
+    currency: "MATIC",
+    explorer: "https://mumbai.polygonscan.com",
+    weth: "0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889", // WMATIC testnet
+    minBalance: "1.0",
+    deployWETH: false
+  },
+  42161: {
+    name: "Arbitrum One",
+    currency: "ETH",
+    explorer: "https://arbiscan.io",
+    weth: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+    minBalance: "0.01",
+    deployWETH: false
+  },
+  421613: {
+    name: "Arbitrum Goerli",
+    currency: "ETH",
+    explorer: "https://goerli.arbiscan.io",
+    weth: "0xe39Ab88f8A4777030A534146A9Ca3B52bd5D43A3",
+    minBalance: "0.01",
+    deployWETH: false
+  },
+  10: {
+    name: "Optimism Mainnet",
+    currency: "ETH",
+    explorer: "https://optimistic.etherscan.io",
+    weth: "0x4200000000000000000000000000000000000006",
+    minBalance: "0.01",
+    deployWETH: false
+  },
+  420: {
+    name: "Optimism Goerli",
+    currency: "ETH",
+    explorer: "https://goerli-optimism.etherscan.io",
+    weth: "0x4200000000000000000000000000000000000006",
+    minBalance: "0.01",
+    deployWETH: false
+  },
+  56: {
+    name: "BNB Smart Chain",
+    currency: "BNB",
+    explorer: "https://bscscan.com",
+    weth: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c", // WBNB
+    minBalance: "0.1",
+    deployWETH: false
+  },
+  97: {
+    name: "BNB Testnet",
+    currency: "BNB",
+    explorer: "https://testnet.bscscan.com",
+    weth: "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd", // WBNB testnet
+    minBalance: "0.1",
+    deployWETH: false
+  },
+  9001: {
+    name: "Evmos Mainnet",
+    currency: "EVMOS",
+    explorer: "https://evm.evmos.org",
+    weth: "0x5Ed91D8c5FcEcD4C7523916712D7AF4F2Bb7aEE4",
+    minBalance: "0.1",
+    deployWETH: false
+  },
+  9000: {
+    name: "Evmos Testnet", 
+    currency: "EVMOS",
+    explorer: "https://evm.evmos.dev",
+    weth: "0x5Ed91D8c5FcEcD4C7523916712D7AF4F2Bb7aEE4",
+    minBalance: "0.1",
+    deployWETH: false
+  },
+  31337: {
+    name: "Localhost",
+    currency: "ETH",
+    explorer: "http://localhost:8545",
+    weth: null, // Will be deployed
+    minBalance: "0.0",
+    deployWETH: true
+  }
+};
+
 async function main() {
-  console.log("Starting TradeSphere DEX deployment...");
+  console.log("🚀 Starting TradeSphere DEX deployment...");
 
   // Get network info
   const network = await ethers.provider.getNetwork();
-  const networkName =
-    network.chainId === 9001
-      ? "Evmos Mainnet"
-      : network.chainId === 9000
-      ? "Evmos Testnet"
-      : network.chainId === 31337
-      ? "Localhost"
-      : `Unknown Network (${network.chainId})`;
+  const chainId = Number(network.chainId);
+  const config = NETWORK_CONFIG[chainId];
+  
+  if (!config) {
+    throw new Error(`❌ Unsupported network with chain ID: ${chainId}`);
+  }
 
-  console.log(`📡 Network: ${networkName} (Chain ID: ${network.chainId})`);
+  console.log(`📡 Network: ${config.name} (Chain ID: ${chainId})`);
 
   const [deployer] = await ethers.getSigners();
   console.log("👤 Deploying with account:", deployer.address);
@@ -24,38 +138,33 @@ async function main() {
   console.log(
     "💰 Account balance:",
     ethers.utils.formatEther(balance),
-    network.chainId === 31337 ? "ETH" : "EVMOS"
+    config.currency
   );
 
   // Check minimum balance (skip for localhost)
-  if (network.chainId !== 31337) {
-    const minBalance = ethers.utils.parseEther("0.1");
-    if (balance.lt(minBalance)) {
+  if (chainId !== 31337) {
+    const minBalance = ethers.utils.parseEther(config.minBalance);
+    if (balance < minBalance) {
       throw new Error(
-        "❌ Insufficient balance for deployment. Need at least 0.1 EVMOS"
+        `❌ Insufficient balance for deployment. Need at least ${config.minBalance} ${config.currency}`
       );
     }
   }
 
-  // Determine WETH strategy based on network
+  // Determine WETH strategy based on network configuration
   let WETH_ADDRESS;
-  let deployWETH = false;
+  let deployWETH = config.deployWETH;
   let weth = null;
 
-  if (network.chainId === 9001) {
-    // Evmos Mainnet - use existing WETH
-    WETH_ADDRESS = process.env.WETH_ADDRESS || "0x5Ed91D8c5FcEcD4C7523916712D7AF4F2Bb7aEE4";
-    console.log("🔗 Using existing Mainnet WETH:", WETH_ADDRESS);
-  } else if (network.chainId === 9000) {
-    // Evmos Testnet - use existing WETH
-    WETH_ADDRESS = process.env.WETH_ADDRESS || "0x5Ed91D8c5FcEcD4C7523916712D7AF4F2Bb7aEE4";
-    console.log("🔗 Using existing Testnet WETH:", WETH_ADDRESS);
-  } else if (network.chainId === 31337) {
-    // Localhost - deploy fresh WETH
-    deployWETH = true;
-    console.log("🏠 Localhost detected - will deploy fresh WETH");
+  if (deployWETH) {
+    console.log(`🏠 ${config.name} - will deploy fresh WETH`);
   } else {
-    throw new Error("❌ Unsupported network for deployment");
+    WETH_ADDRESS = process.env.WETH_ADDRESS || config.weth;
+    console.log(`🔗 Using existing WETH on ${config.name}:`, WETH_ADDRESS);
+    
+    if (!WETH_ADDRESS) {
+      throw new Error(`❌ No WETH address configured for ${config.name}. Set WETH_ADDRESS environment variable.`);
+    }
   }
 
   try {
@@ -127,10 +236,15 @@ async function main() {
     // 4. Save deployment info
     console.log("\n💾 Step 4: Saving deployment information...");
     const deploymentInfo = {
-      network: networkName,
-      chainId: network.chainId,
+      network: config.name,
+      chainId: chainId,
       timestamp: new Date().toISOString(),
       deployer: deployer.address,
+      networkConfig: {
+        currency: config.currency,
+        explorer: config.explorer,
+        isTestnet: chainId === 31337 || chainId === 5 || chainId === 11155111 || chainId === 80001 || chainId === 421613 || chainId === 420 || chainId === 97 || chainId === 9000
+      },
       contracts: {
         TradeSphereFactory: factory.address,
         TradeSphereRouter: router.address,
@@ -142,27 +256,43 @@ async function main() {
         ...(deployWETH && weth && { weth: weth.deployTransaction.hash }),
       },
       explorers: {
-        factory: network.chainId === 31337 
-          ? `http://localhost:8545/address/${factory.address}`
-          : `https://evm.evmos.org/address/${factory.address}`,
-        router: network.chainId === 31337
-          ? `http://localhost:8545/address/${router.address}`
-          : `https://evm.evmos.org/address/${router.address}`,
+        factory: chainId === 31337 
+          ? `${config.explorer}/address/${factory.address}`
+          : `${config.explorer}/address/${factory.address}`,
+        router: chainId === 31337
+          ? `${config.explorer}/address/${router.address}`
+          : `${config.explorer}/address/${router.address}`,
+        weth: chainId === 31337
+          ? `${config.explorer}/address/${WETH_ADDRESS}`
+          : `${config.explorer}/address/${WETH_ADDRESS}`,
       },
     };
 
     fs.writeFileSync("deployment-info.json", JSON.stringify(deploymentInfo, null, 2));
 
-    console.log("\n🎉 TradeSphere DEX core contracts deployed successfully!");
+    console.log(`\n🎉 TradeSphere DEX deployed successfully on ${config.name}!`);
     console.log("📄 Check deployment-info.json for full details");
     
-    if (network.chainId === 31337) {
+    if (chainId === 31337) {
       console.log("\n💡 Next steps for localhost:");
       console.log("   Run: npm run setup:localhost");
       console.log("   This will set up mock tokens, pairs, and liquidity for testing");
     } else {
-      console.log(`🔍 Factory: ${deploymentInfo.explorers.factory}`);
-      console.log(`🔍 Router: ${deploymentInfo.explorers.router}`);
+      console.log(`\n🔍 Deployed contracts on ${config.name}:`);
+      console.log(`   Factory: ${deploymentInfo.explorers.factory}`);
+      console.log(`   Router: ${deploymentInfo.explorers.router}`);
+      console.log(`   WETH: ${deploymentInfo.explorers.weth}`);
+      
+      if (config.isTestnet || deploymentInfo.networkConfig.isTestnet) {
+        console.log("\n💡 Testnet deployment complete!");
+        console.log("   • Test your contracts on the block explorer");
+        console.log("   • Set up test tokens and liquidity");
+      } else {
+        console.log("\n🚨 MAINNET deployment complete!");
+        console.log("   • Verify contracts on the block explorer");
+        console.log("   • Set up production tokens carefully");
+        console.log("   • Consider implementing timelock for admin functions");
+      }
     }
 
   } catch (error) {
@@ -171,12 +301,17 @@ async function main() {
     if (error.code === "NETWORK_ERROR") {
       console.log("\n💡 Troubleshooting tips:");
       console.log("   1. Check your internet connection");
-      console.log("   2. Try a different RPC endpoint:");
-      console.log("      npm run deploy:evmos2");
-      console.log("      npm run deploy:evmos3");
-      console.log("   3. Test RPC connectivity: npm run test-rpc");
+      console.log("   2. Verify RPC endpoint configuration in hardhat.config.js");
+      console.log("   3. Try a different RPC provider if available");
+      console.log("   4. Check if the network is experiencing downtime");
     } else if (error.code === "INSUFFICIENT_FUNDS") {
-      console.log("\n💡 Add more EVMOS to your wallet for gas fees");
+      console.log(`\n💡 Add more ${config.currency} to your wallet for gas fees`);
+      console.log(`   Minimum required: ${config.minBalance} ${config.currency}`);
+    } else if (error.message.includes("nonce")) {
+      console.log("\n💡 Nonce error - try resetting your wallet transaction history");
+    } else if (error.message.includes("gas")) {
+      console.log("\n💡 Gas estimation failed - the network might be congested");
+      console.log("   Try increasing gas limit or waiting for lower network usage");
     }
 
     throw error;

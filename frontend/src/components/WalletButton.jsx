@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useWalletContext } from '../hooks/useWalletContext'
+import { useWallet } from '../hooks/useWallet'
 
 const WalletButton = ({ className = '' }) => {
   const {
@@ -9,11 +9,13 @@ const WalletButton = ({ className = '' }) => {
     balance,
     error,
     formattedAddress,
-    isOnEvmosNetwork,
+    currentNetwork,
+    isOnSupportedNetwork,
     isMetaMaskInstalled,
     connectWallet,
-    switchToEvmosNetwork,
-  } = useWalletContext()
+    switchToPreferredNetwork,
+    switchToNetwork,
+  } = useWallet()
 
   const [showDropdown, setShowDropdown] = useState(false)
 
@@ -26,19 +28,33 @@ const WalletButton = ({ className = '' }) => {
     await connectWallet()
   }
 
-  
-
   // Handle network switch
   const handleNetworkSwitch = async () => {
-    await switchToEvmosNetwork()
+    await switchToPreferredNetwork()
   }
+
+  // Get network display info
+  const getNetworkInfo = () => {
+    if (!currentNetwork) {
+      return { name: 'Unsupported Network', isSupported: false, explorer: '#' }
+    }
+    
+    return {
+      name: currentNetwork.chainName,
+      isSupported: isOnSupportedNetwork,
+      currency: currentNetwork.nativeCurrency.symbol,
+      explorer: currentNetwork.blockExplorerUrls[0]
+    }
+  }
+
+  const networkInfo = getNetworkInfo()
 
   // Connected wallet dropdown
   if (isConnected && account) {
     return (
       <div className={`relative ${className}`}>
         {/* Network Warning */}
-        {!isOnEvmosNetwork && (
+        {!networkInfo.isSupported && (
           <div className="absolute -top-2 -right-2 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
         )}
 
@@ -47,8 +63,13 @@ const WalletButton = ({ className = '' }) => {
           onClick={() => setShowDropdown(!showDropdown)}
           className="flex items-center space-x-2 px-3 py-2 text-white hover:text-blue-200 transition-all focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-slate-900"
         >
-          {/* Wallet Address */}
-          <span className="text-sm font-medium">{formattedAddress}</span>
+          {/* Wallet Address & Network */}
+          <div className="flex flex-col items-start">
+            <span className="text-sm font-medium">{formattedAddress}</span>
+            <span className={`text-xs ${networkInfo.isSupported ? 'text-green-300' : 'text-red-300'}`}>
+              {networkInfo.name}
+            </span>
+          </div>
           
           {/* Dropdown Arrow */}
           <svg
@@ -79,14 +100,16 @@ const WalletButton = ({ className = '' }) => {
                     <div className="text-white font-semibold">Connected Wallet</div>
                     <div className="text-blue-300 text-sm">{formattedAddress}</div>
                   </div>
-                  <div className={`w-3 h-3 rounded-full ${isOnEvmosNetwork ? 'bg-green-400' : 'bg-red-400'}`}></div>
+                  <div className={`w-3 h-3 rounded-full ${networkInfo.isSupported ? 'bg-green-400' : 'bg-red-400'}`}></div>
                 </div>
               </div>
 
               {/* Balance */}
               <div className="p-4 border-b border-blue-700/30">
                 <div className="text-blue-300 text-sm mb-1">Balance</div>
-                <div className="text-white text-lg font-semibold">{balance} EVMOS</div>
+                <div className="text-white text-lg font-semibold">
+                  {balance} {networkInfo.currency || 'ETH'}
+                </div>
               </div>
 
               {/* Network Status */}
@@ -94,11 +117,11 @@ const WalletButton = ({ className = '' }) => {
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="text-blue-300 text-sm">Network</div>
-                    <div className={`text-sm font-medium ${isOnEvmosNetwork ? 'text-green-400' : 'text-red-400'}`}>
-                      {isOnEvmosNetwork ? 'Evmos Network' : 'Wrong Network'}
+                    <div className={`text-sm font-medium ${networkInfo.isSupported ? 'text-green-400' : 'text-red-400'}`}>
+                      {networkInfo.name}
                     </div>
                   </div>
-                  {!isOnEvmosNetwork && (
+                  {!networkInfo.isSupported && (
                     <button
                       onClick={handleNetworkSwitch}
                       className="px-3 py-1 bg-blue-600 text-white text-xs rounded-lg hover:bg-blue-700 transition-colors"
@@ -108,6 +131,33 @@ const WalletButton = ({ className = '' }) => {
                   )}
                 </div>
               </div>
+
+              {/* Network Selector */}
+              {!networkInfo.isSupported && (
+                <div className="p-4 border-b border-blue-700/30">
+                  <div className="text-blue-300 text-sm mb-2">Quick Network Switch</div>
+                  <div className="space-y-1">
+                    <button
+                      onClick={() => switchToNetwork('localhost')}
+                      className="w-full px-3 py-2 bg-slate-700 text-white text-xs rounded-lg hover:bg-slate-600 transition-colors"
+                    >
+                      🏠 Localhost
+                    </button>
+                    <button
+                      onClick={() => switchToNetwork('sepolia')}
+                      className="w-full px-3 py-2 bg-slate-700 text-white text-xs rounded-lg hover:bg-slate-600 transition-colors"
+                    >
+                      🧪 Sepolia Testnet
+                    </button>
+                    <button
+                      onClick={() => switchToNetwork('evmosTestnet')}
+                      className="w-full px-3 py-2 bg-slate-700 text-white text-xs rounded-lg hover:bg-slate-600 transition-colors"
+                    >
+                      ⚡ Evmos Testnet
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {/* Actions */}
               <div className="p-4 space-y-2">
@@ -126,7 +176,7 @@ const WalletButton = ({ className = '' }) => {
                 
                 <button
                   onClick={() => {
-                    window.open(`https://evm.evmos.dev/address/${account}`, '_blank')
+                    window.open(`${networkInfo.explorer}/address/${account}`, '_blank')
                     setShowDropdown(false)
                   }}
                   className="flex items-center space-x-2 w-full px-3 py-2 text-blue-200 hover:text-white hover:bg-blue-700/30 rounded-lg transition-colors text-sm"
